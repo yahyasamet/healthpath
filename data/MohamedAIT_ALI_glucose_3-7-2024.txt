@@ -1,5 +1,3 @@
-Valeur de glycémie,Créé le,03-07-2024 10:31 AM UTC,Créé par,Mohamed AIT ALI
-Appareil,Numéro de série,Horodatage de l'appareil,Type d'enregistrement,Historique de la glycémie mg/dL,Numérisation de la glycémie mg/dL,Insuline à action rapide sans valeur numérique,Insuline à action rapide (unités),Alimentation sans valeur numérique,Glucides (grammes),Glucides (portions),Insuline à action longue sans valeur numérique,Insuline à action longue (unités),Remarques,Glycémie par bandelette mg/dL,Cétone mmol/L,Insuline repas (unités),Correction insuline (unités),Insuline modifiée par l'utilisateur (unités)
 FreeStyle LibreLink,10D06121-1654-4FE8-8850-08C1E630EF7C,07-29-2022 07:12 PM,0,457,,,,,,,,,,,,,,
 FreeStyle LibreLink,10D06121-1654-4FE8-8850-08C1E630EF7C,07-29-2022 07:27 PM,0,459,,,,,,,,,,,,,,
 FreeStyle LibreLink,10D06121-1654-4FE8-8850-08C1E630EF7C,07-29-2022 07:42 PM,0,455,,,,,,,,,,,,,,

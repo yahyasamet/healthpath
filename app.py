@@ -1,11 +1,15 @@
 import streamlit_antd_components as sac
 from langflow.load import run_flow_from_json
 import streamlit as st
+import streamlit.components.v1 as components
 import base64
 import time
 import pyaudio
 import wave
 import requests
+import pandas as pd
+from openai import OpenAI as OP
+import os
 # ------------------------------------------- Record Voice Notes ----------------------------------------------------------
 
 def record_audio(seconds=5, rate=44100, channels=1):
@@ -75,7 +79,23 @@ def generate_speech(input_text):
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
+import yaml
 
+with open('yaml/config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+
+vopenai = OP(
+    api_key=config['api_key']
+)
+
+
+def generateTextFromVoice(path):
+    audio_file= open(path, "rb")
+    transcription = vopenai.audio.transcriptions.create(
+    model="whisper-1", 
+    file=audio_file
+    )
+    return transcription.text
 
 
 def home_page():
@@ -111,7 +131,7 @@ def home_page():
     
 def Assistant() :
     st.title("DAIT Assistant")
-
+    
     # Initialize chat history
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -138,24 +158,24 @@ def Assistant() :
             st.markdown(response)
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
-        
-        generate_speech(response)
-        
-    
-    # if st.button("Record"):
-    #         record_audio()
-    #         VoiceMessage = generateTextFromVoice("./output.wav")
-    #         with st.chat_message("user"):
-    #             st.markdown(VoiceMessage)
-                
-    #         with st.chat_message("assistant"):
-    #             response = "".join(RAG_ChatBot(VoiceMessage))
-    #             st.markdown(response)
-    #         st.session_state.messages.append({"role": "assistant", "content": response})
 
-        
-    #         generate_speech(response)
-    #         autoplay_audio("audio.wav")
+        generate_speech(response)
+        autoplay_audio("audio.wav")   
+
+    if st.button("Record"):
+            record_audio()
+            VoiceMessage = generateTextFromVoice("./output.wav")
+            with st.chat_message("user"):
+                st.markdown(VoiceMessage)
+
+            with st.chat_message("assistant"):
+                response = "".join(RAG_ChatBot(VoiceMessage))
+                st.markdown(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+            generate_speech(response)
+            autoplay_audio("audio.wav")
             
 
 def response_generator(agent, prompt):
@@ -267,8 +287,65 @@ def Food_Helper():
 
 
 
-def Statistics() :
-    pass
+def Statistics():
+    data_file_path = 'data\MohamedAIT_ALI_glucose_3-7-2024.txt'
+    with open(data_file_path, 'r') as file:
+        data = file.read()
+    data = str(data)
+    
+    def process_data(data):
+        lines = data.splitlines()
+        dates = []
+        glucose_values = []
+
+        for line in lines:
+            row = line.split(",")
+            if len(row) > 4:  # Ensure there are enough columns
+                date = row[2].strip()
+                glucose_value = row[4].strip()
+
+                if glucose_value:  # Check if glucose value is not empty
+                    try:
+                        glucose_values.append(int(glucose_value))
+                        dates.append(date)  # Only append the date if the glucose value is valid
+                    except ValueError:
+                        continue  # Skip rows with invalid glucose values
+
+        if glucose_values:
+            max_glucose = max(glucose_values)
+            min_glucose = min(glucose_values)
+        else:
+            max_glucose = min_glucose = None
+
+        # Create DataFrame
+        df = pd.DataFrame({"Date": dates, "Glucose Value": glucose_values})
+
+        # Convert "Date" to datetime format
+        df["Date"] = pd.to_datetime(df["Date"], format='%m-%d-%Y %I:%M %p', errors='coerce')
+
+        return df, max_glucose, min_glucose
+
+    # Process the data
+    df, max_glucose, min_glucose = process_data(data)
+
+    if not df.empty:
+        last_glucose_value = df.iloc[-1]["Glucose Value"]
+        percentage1 = (100 - last_glucose_value) / 100
+        
+        # Create columns for metrics
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Highest Glucose Level", f"{max_glucose} mg/dL", "max%")
+        col2.metric("Lowest Glucose Level", f"{min_glucose} mg/dL", "-min%")
+        col3.metric("Current Glucose Level", f"{last_glucose_value} mg/dL", f"{percentage1:.2%}")
+
+        # Title and header
+        st.title("Blood Glucose Monitoring Chart")
+        st.header("FreeStyle LibreLink Data")
+
+        # Display the line chart
+        st.line_chart(df.set_index("Date")["Glucose Value"])
+    else:
+        st.error("No valid glucose data available.")
 
 if 'current_tab' not in st.session_state:
     st.session_state.current_tab = 'Home'
