@@ -5,9 +5,7 @@ import base64
 import time
 import pyaudio
 import wave
-from pathlib import Path
 import requests
-from PIL import Image
 # ------------------------------------------- Record Voice Notes ----------------------------------------------------------
 
 def record_audio(seconds=5, rate=44100, channels=1):
