@@ -13,6 +13,15 @@ import os
 from PIL import Image
 from io import BytesIO
 import json
+import os
+from dotenv import load_dotenv
+
+# Load .env file
+#load_dotenv()
+
+# Access api_key
+#api_key = os.getenv("api_key")
+api_key = st.secrets["openai"]["api_key"]
 # ------------------------------------------- Record Voice Notes ----------------------------------------------------------
 
 def record_audio(seconds=5, rate=44100, channels=1):
@@ -82,13 +91,10 @@ def generate_speech(input_text):
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
-import yaml
 
-with open('yaml/config.yaml', 'r') as f:
-    config = yaml.safe_load(f)
 
 vopenai = OP(
-    api_key="sk-None-dmSiBkyg5JjOhSumbicYT3BlbkFJ6HWb5X2WV5wVu9FYjWa7"
+    api_key= api_key
 )
 
 
@@ -218,17 +224,17 @@ def response_generator(agent, prompt):
 
 def RAG_ChatBot(prompt):
     TWEAKS = {
-    "ParseData-H8Szu": {},
-    "Prompt-yVMuh": {},
-    "ChatOutput-4pKli": {},
-    "OpenAIModel-OsDGo": {},
-    "Pinecone-nQqRQ": {},
-    "ChatInput-qLlGf": {},
-    "AIMLAPIEmbeddings-FPbQh": {}
+    "ParseData-XhkUG": {},
+    "Prompt-bd0HK": {},
+    "ChatOutput-A46us": {},
+    "AIMLAPIModel-tsWmW": {},
+    "Pinecone-zqmTC": {},
+    "ChatInput-a8STv": {},
+    "AIMLAPIEmbeddings-iAzCX": {}
     }
 
     result = run_flow_from_json(flow="AIML_API_RAG_LANGFLOW.json",
-                                input_value=prompt,
+                                input_value="message",
                                 fallback_to_env_vars=True, # False by default
                                 tweaks=TWEAKS)
 
