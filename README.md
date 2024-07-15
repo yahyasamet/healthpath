@@ -41,7 +41,7 @@ Our business model involves strategic partnerships across various sectors:
 To install and run the project locally, follow these steps:
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/diabetes-management-platform.git
+    git clone https://github.com/yahyasamet/healthpath/
     ```
 2. Navigate to the project directory:
     ```sh
