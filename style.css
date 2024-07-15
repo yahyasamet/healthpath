@@ -301,3 +301,25 @@ body {
     background-image: url("data:bg_health/jpg;base64,%s");
     background-size: cover;
     }
+
+
+h2{
+    color: white;
+}
+
+h3{
+    color: white;
+}
+
+strong{
+    color: white;
+}
+
+li{
+    color: white;
+}
+
+p{
+    color: white;
+}
+
